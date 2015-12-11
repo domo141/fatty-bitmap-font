@@ -1,0 +1,265 @@
+#!/bin/sh
+:; set -x; exec "${EMACS:-emacs}" -fn Monospace-12 -g 70x26 --no-splash --no-desktop --load "$0" "$@"; exit
+;;
+;; simplish bitmap font editor in emacs (7x16 pixel glyphs for now)
+
+(message "Starting '%s'" load-file-name)
+
+(setq text-file (if command-line-args-left argi "sbfeie.txt"))
+
+;; ignore everything else
+(setq command-line-args-left nil)
+
+(unless (display-graphic-p)
+  (let ((msg "This software requires graphic display"))
+    (insert "\n" msg "\n")
+    (error msg)))
+
+(setq program-name load-file-name)
+
+(find-file text-file)
+(setq initial-buffer-choice text-file)
+
+(goto-char (point-min))
+
+(picture-mode)
+
+(insert "\nEdited since " (current-time-string) "\n\n")
+
+(dotimes (num 16 nil) (insert ".......\n"))
+(insert "\n-------\n")
+
+(defun self-insert-character (chr)
+  (setq last-command-event chr) ;; fragile? hax (looked cmds.c)
+  ;;(self-insert-command 1))
+  (picture-self-insert 1))
+
+(defun self-insert-dot () (interactive) (self-insert-character ?.))
+
+(defun save-and-kick ()
+  (interactive)
+  (save-excursion
+    (goto-line 30)
+    (delete-trailing-whitespace (point-min) (point)))
+  (basic-save-buffer-1)
+  (with-current-buffer "*image*"
+    (let ((inhibit-read-only t))
+      (fundamental-mode)
+      (erase-buffer)
+      (call-process "perl" nil t nil "-x" program-name text-file)
+      (goto-char (point-min))
+      (search-forward "/* XPM")
+      (kill-region (point-min) (line-beginning-position))
+      (with-current-buffer "*scratch*"
+	(erase-buffer)
+	(yank))
+      (image-mode))))
+
+(defun draw-move (char func)
+  (setq last-command-event char) ;; fragile? hax (looked cmds.c)
+  (self-insert-command 1)
+  (backward-char 1)
+  (funcall func))
+
+(defun backward-column () (unless (bolp) (backward-char)))
+
+(defun lit-up () (interactive) (draw-move ?# #'previous-line))
+(defun lit-down () (interactive) (draw-move ?# #'next-line))
+(defun lit-left () (interactive) (draw-move ?# #'backward-column))
+(defun lit-right () (interactive) (draw-move ?# #'forward-char))
+
+(defun unlit-up () (interactive) (draw-move ?. #'previous-line))
+(defun unlit-down () (interactive) (draw-move ?. #'next-line))
+(defun unlit-left () (interactive) (draw-move ?. #'backward-column))
+(defun unlit-right () (interactive) (draw-move ?. #'forward-char))
+
+(use-local-map (setq local-keymap (copy-keymap (current-local-map))))
+
+(define-key local-keymap " " #'self-insert-dot)
+(define-key local-keymap "u" #'undo)
+(define-key local-keymap "s" #'save-and-kick)
+(define-key local-keymap "Q" #'save-buffers-kill-emacs)
+
+(define-key local-keymap [(shift up)] #'lit-up)
+(define-key local-keymap [(shift down)] #'lit-down)
+(define-key local-keymap [(shift left)] #'lit-left)
+(define-key local-keymap [(shift right)] #'lit-right)
+
+(define-key local-keymap [(control up)] #'unlit-up)
+(define-key local-keymap [(control down)] #'unlit-down)
+(define-key local-keymap [(control left)] #'unlit-left)
+(define-key local-keymap [(control right)] #'unlit-right)
+
+(overwrite-mode 1)
+
+(set-buffer-modified-p nil)
+
+(with-current-buffer (get-buffer-create "*image*")
+  (setq backup-inhibited t)
+  (call-process "perl" nil t nil "-x" load-file-name)
+  (image-mode))
+
+(with-current-buffer "*scratch*"
+  (insert "Picture-mode keymap (e.g.)
+C-c <  C-c >  C-c ^  C-c .
+C-c `  C-c '  C-c /  C-c \\
+C-w & C-o to del/add lines.
+
+See C-h m for more keybindings.
+
+sbfe-in-emacs additions:
+SPC inserts dot (.)
+u -- undo
+s -- save and update image
+Q -- quit
+SHIFT-arrow-keys: lit
+CTRL-arrow-keys: unlit
+
+Use any other char than dot
+to lit pixel in the image.
+"))
+
+(add-hook 'emacs-startup-hook
+	  (lambda ()
+	    (setq load-read-function nil) ;; restore original
+	    (delete-other-windows)
+	    (split-window-horizontally -30)
+	    (other-window 1)
+	    (switch-to-buffer "*image*")
+	    (split-window-vertically 7)
+	    (other-window 1)
+	    (switch-to-buffer "*scratch*")
+	    (other-window 1)))
+
+(add-hook 'kill-emacs-hook
+	  (lambda ()
+	    (with-current-buffer "*scratch*"
+	      (erase-buffer)
+	      (insert "STARTCHAR\nENCODING\nSWIDTH 560 0\n"
+		      "DWIDTH 7 0\nBBX 7 16 0 -3\nBITMAP\n")
+	      (call-process "perl" nil t nil "-x" program-name text-file "exit")
+	      (insert "ENDCHAR\n")
+	      ;;(send-string-to-terminal (buffer-string))
+	      (write-file "/dev/stdout"))))
+
+;; stop reading this file as emacs lisp code
+(setq load-read-function
+      (lambda (stream)
+	(prog1 nil (condition-case nil (read stream) ((debug error) nil)))))
+
+'` <-- these 2 chars for cperl-mode to work correctly
+
+#!perl
+#line 154
+#---- 154
+
+# This code initially created Tue 13 Nov 2012 20:46:24 EET too
+
+# (lisp-interaction-mode)
+# (cperl-mode)
+
+use 5.10.1;
+use strict;
+use warnings;
+
+my ($pixwidth, $pixheight) = (7, 16);
+
+my @pix;
+sub initpix()
+{
+    push @pix, [ (' ') x 120 ] for (1..10);
+    my @s = (' ') x 10;
+    my @a = ( @s, ('+') x 110);
+    push @pix, [ @a ] for (1..10);
+    my @b = ( @s, ('+') x 9, ('.') x 11, ('+') x 37, ('.') x 11, ('+') x 42 );
+    push @pix, [ @b ] for (1..20);
+    push @pix, [ @a ] for (1..28);
+       @b = ( @s, ('+') x 9, ('#') x 11, ('+') x 37, ('#') x 11, ('+') x 42 );
+    push @pix, [ @b ] for (1..20);
+    push @pix, [ @a ] for (1..10);
+}
+
+sub plotpix($$$)
+{
+    my ($c, $x, $y);
+    $c = $_[2]? '#': '.';
+
+    $x = $_[0] + 21;
+    $pix[$_[1] + 22][$x] = $pix[$_[1] + 46][$x] = $pix[$_[1] + 70][$x] = $c;
+
+    $y = $_[1] * 4 + 23;
+    $x = $_[0] * 4 + 35;
+
+    $pix[$y][$_] = $pix[$y+1][$_] = $pix[$y+2][$_] = $c for ($x..$x+2);
+
+    $c = $_[2]? '.': '#';
+
+    $x = $_[0] + 69;
+    $pix[$_[1] + 22][$x] = $pix[$_[1] + 46][$x] = $pix[$_[1] + 70][$x] = $c;
+
+    $y = $_[1] * 4 + 23;
+    $x = $_[0] * 4 + 84;
+
+    $pix[$y][$_] = $pix[$y+1][$_] = $pix[$y+2][$_] = $c for ($x..$x+2);
+}
+
+sub update_image($)
+{
+    open I, '<', $ARGV[0] || return;
+    my $ln = 0;
+    while (<I>) {
+	next if /[:;]/;
+	s/\s+$//;
+	next if (length) < 3;
+	tr/. /00/;
+	tr/0/1/c;
+	my @l = split //;
+	my ($val, $bm) = (0, 128);
+	for (0..6) {
+	    my $n = $l[$_] || 0;
+	    $val += $n * $bm; $bm /= 2;
+	    plotpix $_, $ln, $n if $_[0];
+	}
+	printf "%02X\n", $val;
+	$ln++;
+	last if $ln >= $pixheight;
+    }
+    close I;
+}
+
+sub writexpm()
+{
+    print "/* XPM */\n", "static char * pix_xpm[] = {\n",
+      qq'"120 98 4 1",\n', qq'" \tc None",\n',
+	qq'".\tc #FFFFFF",\n', qq'"#\tc #000000",\n', qq'"+\tc #7f7f7f",\n';
+
+    my $l = pop @pix;
+    print '"', (join '', @{$_}), qq'",\n' foreach (@pix);
+    print '"', (join '', @{$l}), qq'"};\n';
+}
+
+if (@ARGV == 0)
+{
+    initpix;
+
+    for my $x (0..6) {
+	for my $y (0..15) {
+	    plotpix $x, $y, 0;
+	}}
+    writexpm;
+}
+elsif (@ARGV == 1)
+{
+    initpix;
+    update_image 1;
+    writexpm;
+}
+else {
+    update_image 0;
+}
+
+__END__
+
+;; Local Variables:
+;; mode: emacs-lisp
+;; End:
