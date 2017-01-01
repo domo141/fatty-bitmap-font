@@ -59,11 +59,14 @@ $(pcfgz): ../pcf/.stamp
 clean:
 	rm -f $(f7bgen) $(pcfs) ttffont.try *~
 
+#MKITALIC=./mkitalic-1.0-dy4 # use this if milder slant is desired
+MKITALIC=./mkitalic-1.0
+
 .INTERMEDIATE: mkitalic-1.0-dy4
 mkitalic-1.0-dy4: mkitalic-1.0 Makefile
 	perl -pe 's/3/4/ if /slant deep/' $< > $@
 
-%.pcf:	%.bdf
+%.pcf:	%.bdf Makefile
 	bdftopcf -o $@ $<
 
 ../pcf/%.pcf.gz: %.pcf
@@ -75,11 +78,11 @@ fatty7x16-iso8859-%.bdf: fatty7x16-iso10646-1.bdf
 fatty7x16B-%.bdf: fatty7x16-%.bdf
 	perl ./mkbold-1.0 $< > $@
 
-fatty7x16I-%.bdf: fatty7x16-%.bdf   mkitalic-1.0-dy4
-	perl ./mkitalic-1.0-dy4 $< > $@
+fatty7x16I-%.bdf: fatty7x16-%.bdf   $(MKITALIC)
+	perl ./$(MKITALIC) $< > $@
 
-fatty7x16BI-%.bdf: fatty7x16B-%.bdf mkitalic-1.0-dy4
-	perl ./mkitalic-1.0-dy4 $< > $@
+fatty7x16BI-%.bdf: fatty7x16B-%.bdf $(MKITALIC)
+	perl ./$(MKITALIC) $< > $@
 
 
 fontalias.sh:
