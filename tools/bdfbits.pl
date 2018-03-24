@@ -7,7 +7,7 @@
 #	    All rights reserved
 #
 # Created: Tue Nov 06 21:21:34 EET 2007 too
-# Last modified: Fri 11 Dec 2015 20:06:18 +0200 too
+# Last modified: Sat 24 Mar 2018 22:08:21 +0200 too
 
 use strict;
 use warnings;
@@ -22,14 +22,16 @@ if ($ARGV[0] eq '.') {
 
 while (<>)
 {
-    next unless /^STARTCHAR\s+(.*)\s*/;
-    my $startchar = $1;
+    next unless /^STARTCHAR\s+U\+(\w+)(.*)\s*/;
+    my $startchar = "U+$1$2";
+    my $ord = hex $1;
     my $encoding;
     while (<>)
     {
 	$encoding = $1, next if /^ENCODING\s+(.*)\s*/;
 	last if /^BITMAP/;
     }
+    die "\nENCODING $encoding != $ord\n\n" unless $encoding == $ord;
     my (@bitlines, $width); $width = 0;
     while (<>)
     {
