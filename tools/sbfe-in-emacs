@@ -140,17 +140,18 @@ to lit pixel in the image.
 	      (write-file "/dev/stdout"))))
 
 ;; ref: emacsninja.com/posts/forbidden-emacs-lisp-knowledge-block-comments.html
-;; /* We've just seen #@00, which means "skip to end". */
-#@00
+#@00 /* We've just seen #@00, which means "skip to end". */
+
+^^ emacs no longer evaluates this file ^^
+
+;; (cperl-mode)
+## (emacs-lisp-mode)
 
 #!perl
-#line 154
-#---- 154
+#line 152
+#---- 152
 
 # This code initially created Tue 13 Nov 2012 20:46:24 EET too
-
-# (lisp-interaction-mode)
-# (cperl-mode)
 
 use 5.10.1;
 use strict;
