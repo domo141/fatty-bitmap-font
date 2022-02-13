@@ -119,17 +119,14 @@ Use any other char than dot
 to lit pixel in the image.
 "))
 
-(add-hook 'emacs-startup-hook
-	  (lambda ()
-	    (setq load-read-function nil) ;; restore original
-	    (delete-other-windows)
-	    (split-window-horizontally -30)
-	    (other-window 1)
-	    (switch-to-buffer "*image*")
-	    (split-window-vertically 7)
-	    (other-window 1)
-	    (switch-to-buffer "*scratch*")
-	    (other-window 1)))
+(delete-other-windows)
+(split-window-horizontally -30)
+(other-window 1)
+(switch-to-buffer "*image*")
+(split-window-vertically 7)
+(other-window 1)
+(switch-to-buffer "*scratch*")
+(other-window 1)
 
 (add-hook 'kill-emacs-hook
 	  (lambda ()
@@ -142,12 +139,9 @@ to lit pixel in the image.
 	      ;;(send-string-to-terminal (buffer-string))
 	      (write-file "/dev/stdout"))))
 
-;; stop reading this file as emacs lisp code
-(setq load-read-function
-      (lambda (stream)
-	(prog1 nil (condition-case nil (read stream) ((debug error) nil)))))
-
-'` <-- these 2 chars for cperl-mode to work correctly
+;; ref: emacsninja.com/posts/forbidden-emacs-lisp-knowledge-block-comments.html
+;; /* We've just seen #@00, which means "skip to end". */
+#@00
 
 #!perl
 #line 154
