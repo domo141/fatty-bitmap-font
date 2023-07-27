@@ -1,0 +1,22 @@
+#!/usr/bin/env fontforge
+
+// name: embolden.pe; license: unlicense
+
+while ($argc > 1)
+    Open($1)
+
+    //Print($familyname)
+
+    SelectAll()
+    //Select(33, 126)
+    //Select(33)
+    ChangeWeight(60)
+    Transform(90, 0,  0, 100,  0, 0) // narrower
+
+    SetFontNames("", "Emb" + $familyname)
+
+    //Save("Emb" + $1:rt + ".std")
+    Generate("Emb" + $1:t)
+    Close()
+    shift
+endloop

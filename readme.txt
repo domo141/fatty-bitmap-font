@@ -4,6 +4,8 @@
   ⠼⠃⠀⠸⠷⠺⠃⠸⠷⠚⠀⠿⠖⢃⠙⢫⡟⠀⠀⠀⠠⠻⠷⠛⠠⠾⠗⠀⠸⠷⠚⠼⠃⠼⠃⠿⠖⠟⣼⠋⠛⠁⠀⠀⠀⠠⠟⠀⠀⠿⠶⠛⠼⠃⠼⠃⠸⠷⠚⠀
   ⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣘⣛⣋⣁⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣐⣋⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⡀
 
+  (update 2023-07-27 -- emboldening outline fonts in outline/)
+
   fatty is a 7x16 pixel, fixed width bitmap font. this contais
   647 glyphs (of which 256 (U+2800 - U+28ff) braille patterns)
   (the title is constructed of braille characters, i hope your
