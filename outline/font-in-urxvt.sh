@@ -8,7 +8,7 @@
 #	    All rights reserved
 #
 # Created: Sun 30 Apr 2023 13:40:18 EEST too
-# Last modified: Thu 27 Jul 2023 18:48:29 +0300 too
+# Last modified: Fri 28 Jul 2023 11:33:43 +0300 too
 
 # SPDX-License-Identifier: BSD Zero Clause License (0BSD)
 
@@ -21,17 +21,17 @@ LANG=C.UTF-8 LC_ALL=C.UTF-8; export LANG LC_ALL; unset LANGUAGE
 
 die () { printf '%s\n' '' "$@" ''; exit 1; } >&2
 
-test $# -gt 0 || die "Usage: ${0##*/} font [more urxvt options]" '' \
+test $# -gt 0 || die "Usage: ${0##*/} (font|'-') [more urxvt options]" '' \
 		   "Hint: 'xft:' prefix in font name is often needed..."
 
 x_eval () { printf '+ %s\n' "$*" >&2; eval "$*"; }
 
 x_setsid_f () { printf '+ %s\n' "$*" >&2; setsid -f "$@"; }
 
-if test $1 != -bg
+if test $1 != -
 then
 	x_setsid_f urxvt +sb -b 0 -cr black -sl 0 -geometry 50x22 -fn "$@" \
-		-e sh "$0" -bg "$@"
+		-e sh "$0" - "$@"
 	exit
 fi
 shift
