@@ -8,7 +8,7 @@
 #	    All rights reserved
 #
 # Created: Fri 23 Aug 2013 17:01:57 EEST too
-# Last modified: Tue 24 Nov 2015 21:02:52 +0200 too
+# Last modified: Mon 29 Nov 2021 12:00:14 +0200 too
 
 # print characters referenced by a bdf file
 
@@ -34,15 +34,18 @@ else {
 my @codes;
 
 while (<I>) {
-    push @codes, chr($1) if /ENCODING\s+(\d+)/;
+    push @codes, $1 if /ENCODING\s+(\d+)/;
 }
+# this takes care of "common" 0...
+#shift @codes while @codes and $codes[0] < 32;
 
 sub out()
 {
     my $cnt = 0;
+    print ' ';
     foreach (@codes) {
-	print $_;
-	$cnt = 0, print("\n"), next if $cnt >= 68;
+	print chr($_);
+	$cnt = 0, print("\n "), next if $cnt == 68;
 	$cnt = $cnt + 1;
     }
     print "\n" if $cnt;
