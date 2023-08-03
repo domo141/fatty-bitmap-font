@@ -8,7 +8,7 @@
 #	    All rights reserved
 #
 # Created: Tue 04 Jul 2023 23:09:17 EEST too
-# Last modified: Thu 27 Jul 2023 18:40:35 +0300 too
+# Last modified: Thu 03 Aug 2023 17:52:59 +0300 too
 
 # SPDX-License-Identifier: BSD Zero Clause License (0BSD)
 
@@ -36,7 +36,7 @@ then
 	: executing in container :
 	export DEBIAN_FRONTEND=noninteractive
 	apt-get update
-	apt-get install -y -q --no-install-recommends fontforge
+	apt-get install -y -q --no-install-recommends fontforge less
 	apt-get -y autoremove
 	apt-get -y clean
 	rm -rf /var/lib/apt/lists/

@@ -18,6 +18,13 @@ test $# = 0 && {
 	exit 1
 }
 
+case $1 in *:*) ;; *)
+	exec >&2; echo
+	echo "'$1' does not contain ':'s (probably not container image name)"
+	echo
+	exit 1
+esac
+
 wo="-v /etc/localtime:/etc/localtime:ro --device /dev/dri"
 test "${DISPLAY-}" && {
 	wo="$wo -v /tmp/.X11-unix:/tmp/.X11-unix"
@@ -34,11 +41,16 @@ test "${WAYLAND_DISPLAY-}" && {
 }
 wo="$wo --security-opt label=type:container_runtime_t"
 
+# Some systems fail to run ./script, so add indirection
+ci=$1
+shift
+test $# -gt 0 && set -- sh -c 'exec "$0" "$@"' "$@"
+
 x_exec () { printf '+ %s\n' "$*" >&2; exec "$@"; }
 
 x_exec \
 podman run --pull=never --rm -it --privileged $wo \
-	--tmpfs /tmp --tmpfs /run -v "$HOME:$HOME" -w "$PWD" "$@"
+	--tmpfs /tmp --tmpfs /run -v "$HOME:$HOME" -w "$PWD" $ci "$@"
 
 # Local variables:
 # mode: shell-script
