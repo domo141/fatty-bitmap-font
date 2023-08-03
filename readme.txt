@@ -41,6 +41,12 @@
   place for this under users' $HOME/ but i just don't know it
   right now).
 
+  (update 2023-08-03: create dir $HOME/.local/share/fonts/core/,
+   copy files there and run that xset fp+ (xset fp- previous
+   first, if one... and also run fc-cache -fv. now also
+   urxvt -fn xft:Fatty:pixelsize=16  and  emacs -fn Fatty
+   may work...)
+
   the tools/ directory contains tools related to this font.
   these are safe to run as is (these don't modify anything
   by default and these give brief help if needed). perhaps
