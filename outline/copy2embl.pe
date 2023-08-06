@@ -1,0 +1,13 @@
+#!/usr/bin/env fontforge
+
+// name: copy2embl.pe; license: unlicense
+
+pfx = "Embl" // fonts.conf to be used to embolden
+while ($argc > 1)
+    Open($1)
+    SetFontNames("", pfx + $familyname)
+    //Save(pfx + $1:r:t + ".std")
+    Generate(pfx + $1:t)
+    Close()
+    shift
+endloop

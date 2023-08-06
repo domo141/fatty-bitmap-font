@@ -18,9 +18,16 @@
 (out "bold-italic" 'bold-italic)
 (out "normal")
 
-(insert "\n")
-(insert (format " default font width:  %d\n" (default-font-width)))
-(insert (format " default font height: %d\n" (default-font-height)))
+(defvar dfv (default-font-width))
+(defvar dfh (default-font-height))
+
+(when (and (> dfv 1) (> dfh 1))
+  (defvar dfv80 (* 80 dfv))
+  (defvar dfh24 (* 24 dfh))
+
+  (insert "\n")
+  (insert (format " default font width:  %d (%d)\n" dfv dfv80))
+  (insert (format " default font height: %d (%d)\n" dfh dfh24)))
 
 (not-modified)
 (message "C-x C-c to exit")

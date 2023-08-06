@@ -1,0 +1,24 @@
+#!/usr/bin/env fontforge
+
+// name: narrow90-hack.pe; license: unlicense
+
+pfx = "Embl90" // fonts.conf to be used to embolden
+while ($argc > 1)
+    Open($1)
+
+    SelectAll()
+    // x' = 90x + 0y + 0, y' = 0x + 100y + 0
+    Transform(90, 0,  0, 100,  0, 0) // narrow by 90/100
+
+    foreach
+      i = GlyphInfo("Width") //; Print(i)
+      if (i > 0 && i < 1244) SetWidth(1244); endif // XXX works for Hack-*
+    endloop
+
+    SetFontNames("", pfx + $familyname)
+
+    //Save(pfx + $1:r:t + ".std")
+    Generate(pfx + $1:t)
+    Close()
+    shift
+endloop

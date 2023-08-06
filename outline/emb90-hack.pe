@@ -1,0 +1,27 @@
+#!/usr/bin/env fontforge
+
+// name: emb90-hack.pe; license: unlicense
+
+// this was the first I did (embolden.pe). left for reference
+// later versions use fonts.conf to do the emboldening, at rasterizer time
+
+pfx = "Emb" // fonts.conf to be used to embolden
+while ($argc > 1)
+    Open($1)
+
+    SelectAll()
+    ChangeWeight(75)
+    Transform(90, 0,  0, 100,  0, 0) // narrower
+
+    foreach
+      i = GlyphInfo("Width") //; Print(i)
+      if (i > 0 && i < 1244) SetWidth(1244); endif // XXX works for Hack-*
+    endloop
+
+    SetFontNames("", pfx + $familyname)
+
+    //Save(pfx + $1:r:t + ".std")
+    Generate(pfx + $1:t)
+    Close()
+    shift
+endloop

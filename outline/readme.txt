@@ -27,8 +27,13 @@ the emacs version (since using Cairo instead of xft) no longer
 utilizes the Xft.embolden resource (it would if one compiled
 using the xft backend but...).
 
-Also,   emacs -fn Hack-11:embolden[:true]   does not work as
+Also,   emacs -fn Hack-11:embolden[=true]   does not work as
 expected...
+Update 2023-08: With emacs-pgtk 29.1 the above seems to work,
+so until everyone who desires this emboldening has updated to
+ emacs new enough this is still useful (in addition to the
+width reducinf feature in some of the scripts...)
+
 
 So, after playing a while with a thought whether an "emboldened"
 version of the font I am using (Hack) could be done, and after
@@ -36,7 +41,12 @@ some internet searching and a bit of playing with Fontforge I
 got a script written which seems to provide satisfactory results
 for me.
 
-and that one is the `./embolden.pe` here.
+and that one is the `./emb-90-hack.pe` here.
+
+Update 2023-08-06: Since the first try I've changed to use fonts.conf
+to to the emboldening (and dropped use of `ChangeWeight() in newer
+*.pe files). The one I currently use are `width90-hack.pe` and
+`fonts.conf` -- this text will be updated later...
 
 That one requires Fontforge to be installed on the system. One
 can do that, or (if having podman(1) available), create debian:12
@@ -47,6 +57,8 @@ script ./mk-dffci.sh (make debian 12 fontforge container image)
 The script ./font-in-urxvt.sh shows some chars in bold, italic,
 bold-italic and regular faces, and {width}x{height} of the
 "monospace!" font (and space required for 80x24 character window).
+
+./font-in-emacs.sh does the same using emacs...
 
 I executed /path/to/embolden.pe Hack-*.ttf in $HOME/.fonts/Hack
 where I had the Hack font installed (should be in

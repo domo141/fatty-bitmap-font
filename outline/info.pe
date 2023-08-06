@@ -1,0 +1,22 @@
+#!/usr/bin/env fontforge
+
+// name: info.pe; license: unlicense
+
+// GlyphInfo of a few glyphs. Edit "Select"s below...
+
+while ($argc > 1)
+    Open($1)
+    Print($familyname)
+    //SelectAll()
+    Select(105, 111, 33) // i,j,k,l,m,n,o,!
+    foreach
+      u = GlyphInfo("Unicode")
+      w = GlyphInfo("Width")
+      lb = GlyphInfo("LBearing")
+      rb = GlyphInfo("RBearing")
+      bb = GlyphInfo("BBox")
+      Print(u, " ", w, " ", lb, " ", rb, " ", bb)
+    endloop
+    Close()
+    shift
+endloop
