@@ -2,7 +2,7 @@
 
 // name: width90-hack.pe; license: unlicense
 // reduces character spacing, works for Hack-* fonts (2023-07)
-// have to check for exact (1233) as changes this for more than one glyph
+// have to check for exact (1233) as this changes more than one glyph...
 
 pfx = "EmblCond"
 while ($argc > 1)
@@ -12,11 +12,11 @@ while ($argc > 1)
     foreach
       w = GlyphInfo("Width")
       if (w == 1233)
-         u = GlyphInfo("Unicode"); Print(u, ": ", w)
-      	 SetWidth(90, 2) // 90%
+	u = GlyphInfo("Unicode"); Print(u, ": ", w)
+	SetWidth(90, 2) // 90%
       elseif (w > 1233 ) Error("Width more than 1233: (" + w + ")")
       //else // some test code...
-      	//u = GlyphInfo("Unicode"); Print(u, ": ", w)
+	//u = GlyphInfo("Unicode"); Print(u, ": ", w)
 	//if (u > 200) Quit(0); endif
       endif
     endloop

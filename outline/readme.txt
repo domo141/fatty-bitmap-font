@@ -1,4 +1,19 @@
 
+TL;DR; These days I just do:
+
+   $ podman pull debian:12
+   $ ./mk-dffci.sh !
+   $ cp /path/to/Hack-*.ttf .
+   $ ./podman-run debian-12-fontforge:20230902 ./width90-hack.pe Hack-*.ttf
+   $ mkdir $HOME/.config/fontconfig/
+   $ cp ./fonts.conf $HOME/.config/fontconfig/fonts.conf
+   $ mkdir -p $HOME/.local/share/fonts/hack/
+   $ mv EmblCondHack-*.ttf $HOME/.local/share/fonts/hack/
+   $ fc-cache -fv
+   $ emacs -fn EmblCondHack-12 &
+
+--
+
 Eyes gets older and display resolutions higher
 
 Therefore the fatty bitmap font has not been enough for
@@ -17,6 +32,8 @@ fonts -the glyphs are too "thin".
 For long time I had this solved with:
 
   $ urxvt -fn xft:Hack-11:embolden:matrix='.95 0 0 1' -letsp -1
+
+  (and now $ urxvt -fn xft:Hack-11:embolden -letsp -2)
 
 and
 
